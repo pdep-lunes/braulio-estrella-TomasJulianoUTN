@@ -15,8 +15,10 @@ data Personaje = UnPersonaje {
     vida :: Double
 } deriving Show
  
+espinas :: Personaje
 espinas = UnPersonaje "Espinas" bolaEspinosa (granadaDeEspinas 5) True 4800
-pamela = UnPersonaje "Pamela" (lluviaDeTuercas "sanadoras" False) torretaCurativa True 9600
+pamela :: Personaje
+pamela = UnPersonaje "Pamela" (lluviaDeTuercas "sanadora") torretaCurativa False 9600
 
 bolaEspinosa :: Poder
 bolaEspinosa contrincante
@@ -29,11 +31,19 @@ granadaDeEspinas radioDeExplosion contrincante
   | radioDeExplosion > 3 = contrincante {nombre = nombre contrincante ++ " Espinas estuvo aqui"}
   | otherwise = bolaEspinosa contrincante
 
-lluviaDeTuercas :: String -> Bool -> Poder
-lluviaDeTuercas tipoDeTuerca esEnemigo personaje
-  | tipoDeTuerca == "sanadoras" && esEnemigo == False = personaje {vida = vida personaje + 800}
-  | tipoDeTuerca == "dañinas" && esEnemigo == True = personaje {vida = vida personaje / 2}
+lluviaDeTuercas :: String -> Poder
+lluviaDeTuercas tipoDeTuerca personaje
+  | tipoDeTuerca == "sanadora" = personaje {vida = vida personaje + 800}
+  | tipoDeTuerca == "dañina" = personaje {vida = vida personaje / 2}
   | otherwise = personaje
 
 torretaCurativa :: Poder
 torretaCurativa aliado = aliado {superPoderActivo = True, vida = doble (vida aliado)}
+
+atacarConPoderEspecial :: Personaje -> Poder
+atacarConPoderEspecial personaje contrincante
+  | superPoderActivo personaje = superPoder personaje . poderBasico personaje $ contrincante 
+  | otherwise = contrincante
+
+estaEnLasUltimas :: Personaje -> Bool
+estaEnLasUltimas personaje = vida personaje < 800
